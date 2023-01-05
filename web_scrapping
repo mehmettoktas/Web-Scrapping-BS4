@@ -1,0 +1,41 @@
+from bs4 import BeautifulSoup
+import requests
+import pandas as pd
+
+liste =[]
+ag =  "https://www.mavi.com/erkek/c/2"
+a = 1
+while a <=20:
+    
+    r = requests.get(ag+"?page="+str(a)+"")
+    soup = BeautifulSoup(r.content,"lxml")
+
+
+    st1 = soup.find("div",attrs={"class":"product-list-cards-inner js-product-list-cards view:4 mobile-view:2"})
+    st2 = st1.find("div", attrs={"data-pageid":a})
+    st3 = st1.find_all("div", attrs={"data-pageid":a})
+
+
+    for detaylar in st3:
+        link_sonu = detaylar.a.get("href")
+        link_basi = "https://www.mavi.com"
+        link = link_basi + link_sonu  
+        print(link)
+
+        r1 = requests.get(link)
+        soup1 = BeautifulSoup(r1.content,"lxml")
+        urun_kodu = soup1.find("div", attrs={"class":"product__color-name"}).text
+        
+
+        urun_aciklamasi = soup1.find("span", attrs={"class":"product-features-description hideContent"}).text
+
+        
+        print("Urun kodu {}".format(urun_kodu))
+        print("Urun acıklaması {}".format(urun_aciklamasi))
+
+        liste.append([urun_kodu,urun_aciklamasi])
+        
+    a = a+1
+    
+    
+    
